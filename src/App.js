@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import logo from './logo.svg';
 import './App.css';
 import Button from 'react-bootstrap/Button'
@@ -25,70 +25,68 @@ const TextField = styled.input `
     cursor: pointer;
   }
 `;
-const data = [
-    { Name: "Tiger Nixon", Position: "System Architect", Office: "Edinburgh", Ext: "5421", Stardate: "2011/04/25", Salary: "$320,800", Status: 0 },
-    { Name: "Farrett Winters", Position: "Axxountant", Office: "Tokyo", Ext: "8422", Stardate: "2011/07/25", Salary: "$170,750", Status: 1 },
-    { Name: "Ashton Cox", Position: "Junior Technical Autho", Office: "San Francisco", Ext: "1562", Stardate: "2009/01/12", Salary: "$86,000", Status: 0 }
-];
+// const data = [
+//     { Name: "Tiger Nixon", Position: "System Architect", Office: "Edinburgh", Ext: "5421", Stardate: "2011/04/25", Salary: "$320,800", Status: 0 },
+//     { Name: "Farrett Winters", Position: "Axxountant", Office: "Tokyo", Ext: "8422", Stardate: "2011/07/25", Salary: "$170,750", Status: 1 },
+//     { Name: "Ashton Cox", Position: "Junior Technical Autho", Office: "San Francisco", Ext: "1562", Stardate: "2009/01/12", Salary: "$86,000", Status: 0 }
+// ];
 
 
 const colum = [{
-        name: 'Name',
-        selector: 'Name',
+        name: 'Id',
+        selector: 'id',
         sortable: true,
     },
     {
-        name: 'Position',
-        selector: 'Position',
+        name: 'Title',
+        selector: 'title',
         sortable: true,
     },
     {
-        name: 'Office',
-        selector: 'Office',
+        name: 'Descripcion',
+        selector: 'description',
         sortable: true,
     },
     {
-        name: 'Ext',
-        selector: 'Ext',
+        name: 'LeftColor',
+        selector: 'leftColor',
         sortable: true,
     },
     {
-        name: 'Stardate',
-        selector: 'Stardate',
+        name: 'RightColor',
+        selector: 'rightColor',
         sortable: true,
     },
     {
-        name: 'Salary',
-        selector: 'Salary',
-        sortable: true,
-    },
-    {
-        name: 'Status',
-        selector: 'Status',
+        name: 'Editar',
         sortable: false,
         cell: row => {
-            if (row.Status === 1) {
-                return <Button variant = "success"
-                href = "#" > Editar < /Button>
-            } else {
-                return <Button variant = "success"
-                href = "#"
-                disabled > En Proceso < /Button>
-            }
+            return <Button variant = "success"
+            href = "http://localhost/api/?row=" >
+                Editar < /Button>
         }
-    },
-    {
-        name: 'Eliminar',
-        sortable: false,
-        cell: () => < Button variant = "danger"
-        href = "#" > Eliminar < /Button>
     }
 ]
 const App = () => {
+        const [data, setData] = useState([]);
+        useEffect(() => {
+            const fetchExercises = async() => {
+                try {
+                    let res = await fetch('http://localhost:8000/api/exercises')
+                    let data = await res.json()
+                    setData(data);
+
+                } catch (error) {
+                    console.log(error)
+
+                }
+            }
+            fetchExercises()
+        }, [])
         const [filterText, setFilterText] = React.useState('');
-        const filteredItems = data.filter(item => item.Name.includes(filterText) | item.Position.includes(filterText));
+        const filteredItems = data.filter(item => item.title.includes(filterText) | item.description.includes(filterText));
         const subHeaderComponentMemo = React.useMemo(() => < Filter onFilter = { value => setFilterText(value) }
-            />, []); 
+            />, []);
             return ( <
                 div className = "App" >
                 <
@@ -106,7 +104,8 @@ const App = () => {
                 subHeader subHeaderComponent = { subHeaderComponentMemo }
                 pagination /
                 >
-                < /
+                <
+                /
                 div >
             );
         }
